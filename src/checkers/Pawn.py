@@ -3,6 +3,7 @@ class Pawn:
         self.pos = pos
         self.state = state
         self.is_king = False
+        self.clicked = False
     
     def __str__(self):
         return f'{self.state} at {self.pos}'
@@ -15,3 +16,12 @@ class Pawn:
     
     def get_state(self):
         return self.state
+    
+    def set_position(self, pos):
+        self.pos = pos
+    
+    def set_clicked(self, state):
+        self.clicked = state
+    
+    def is_clicked(self):
+        return self.clicked

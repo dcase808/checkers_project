@@ -42,6 +42,20 @@ class Engine:
 
     def event_handler(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
-            pos = pg.mouse.get_pos()
+            for pawn in self.board.pawns:
+                x, y = pg.mouse.get_pos()
+                pos = (y // 100, x // 100)
+                if pawn.is_clicked():
+                    print('we here, clicked')
+                    pawn.set_position(pos)
+                    pawn.set_clicked(False)
+                elif pawn.get_position() == pos and not pawn.is_clicked():
+                    for p in self.board.pawns:
+                        p.set_clicked(False)
+                    print('we here, not clicked')
+                    pawn.set_clicked(True)
+
+
+
             x, y = pos
-            print(x // 100, y // 100)
+            # print(x // 100, y // 100)
