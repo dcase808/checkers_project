@@ -9,6 +9,8 @@ class Board:
         self.generate_legal_moves()
         self.clicked = None
         self.who_to_move = STATE_RED
+        self.score_red = 0
+        self.score_black = 0
     
     def init_board(self):
         for i in range(BOARD_HEIGHT):
