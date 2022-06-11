@@ -45,7 +45,7 @@ class Engine:
             for pawn in self.board.pawns:
                 x, y = pg.mouse.get_pos()
                 pos = (y // 100, x // 100)
-                if pawn.is_clicked():
+                if pawn.is_clicked() and pos in self.board.legal_moves:
                     print('we here, clicked')
                     pawn.set_position(pos)
                     pawn.set_clicked(False)
