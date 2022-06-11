@@ -1,3 +1,5 @@
+from .constants import STATE_BLACK, STATE_RED
+
 class Pawn:
     def __init__(self, pos, state):
         self.pos = pos
@@ -18,7 +20,16 @@ class Pawn:
         return self.state
     
     def set_position(self, pos):
-        self.pos = pos
+        if self.state == STATE_BLACK and not self.is_king:
+            new_y, new_x = pos
+            y, x = self.pos
+            if new_y == y + 1:
+                self.pos = pos
+        elif self.state == STATE_RED and not self.is_king:
+            new_y, new_x = pos
+            y, x = self.pos
+            if new_y == y - 1:
+                self.pos = pos
     
     def set_clicked(self, state):
         self.clicked = state

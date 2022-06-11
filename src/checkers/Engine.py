@@ -36,26 +36,28 @@ class Engine:
         for pawn in self.board.pawns:
             y, x = pawn.get_position()
             if pawn.get_state() == STATE_RED:
-                pg.draw.circle(self.window, (255, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
+                if pawn.is_clicked():
+                    pg.draw.circle(self.window, (155, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
+                else:
+                    pg.draw.circle(self.window, (255, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
             if pawn.get_state() == STATE_BLACK:
-                pg.draw.circle(self.window, (255, 255, 255), (x * 100 + 50, y * 100 + 50), 30)
+                if pawn.is_clicked():
+                    pg.draw.circle(self.window, (155, 155, 155), (x * 100 + 50, y * 100 + 50), 30)
+                else:
+                    pg.draw.circle(self.window, (255, 255, 255), (x * 100 + 50, y * 100 + 50), 30)
 
     def event_handler(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
-            for pawn in self.board.pawns:
-                x, y = pg.mouse.get_pos()
-                pos = (y // 100, x // 100)
-                if pawn.is_clicked() and pos in self.board.legal_moves:
-                    print('we here, clicked')
-                    pawn.set_position(pos)
-                    pawn.set_clicked(False)
-                elif pawn.get_position() == pos and not pawn.is_clicked():
-                    for p in self.board.pawns:
-                        p.set_clicked(False)
-                    print('we here, not clicked')
-                    pawn.set_clicked(True)
+            self.move_pawn(pg.mouse.get_pos())
 
-
-
-            x, y = pos
-            # print(x // 100, y // 100)
+    def move_pawn(self, position):
+        for pawn in self.board.pawns:
+            x, y = position
+            pos = (y // 100, x // 100)
+            if pawn.is_clicked() and pos in self.board.legal_moves:
+                pawn.set_position(pos)
+                pawn.set_clicked(False)
+            elif pawn.get_position() == pos and not pawn.is_clicked():
+                for p in self.board.pawns:
+                    p.set_clicked(False)
+                pawn.set_clicked(True)
