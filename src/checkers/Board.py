@@ -5,7 +5,10 @@ class Board:
     def __init__(self):
         self.pawns = []
         self.init_board()
-        self.legal_moves = self.generate_legal_moves()
+        self.legal_moves = []
+        self.generate_legal_moves()
+        self.clicked = None
+        self.who_to_move = STATE_RED
     
     def init_board(self):
         for i in range(BOARD_HEIGHT):
@@ -27,4 +30,46 @@ class Board:
             for j in range(BOARD_WIDTH):
                 if (i % 2 == 0 and j % 2 == 1) or (i % 2 == 1 and j % 2 == 0):
                     out.append((i, j))
-        return out
+        for pawn in self.pawns:
+            out.remove(pawn.get_position())
+        self.legal_moves = out
+    
+    def switch_who_to_move(self):
+        if self.who_to_move == STATE_RED:
+            self.who_to_move = STATE_BLACK
+        elif self.who_to_move == STATE_BLACK:
+            self.who_to_move = STATE_RED
+    
+    def click_pawn_event(self, position):
+        x, y = position
+        pos = (y // 100, x // 100)
+        if self.clicked and pos in self.legal_moves:
+            if self.move_pawn(self.clicked, pos):
+                self.switch_who_to_move()
+            self.clicked.set_clicked(False)
+            self.clicked = None
+            
+        elif not self.clicked:
+            for pawn in self.pawns:
+                if pawn.get_position() == pos and self.who_to_move == pawn.get_state():
+                    pawn.set_clicked(True)
+                    self.clicked = pawn
+        else:
+            self.clicked.set_clicked(False)
+            self.clicked = None
+        self.generate_legal_moves()
+
+    def move_pawn(self, pawn, pos):
+        if pawn.get_state() == STATE_BLACK and not pawn.get_is_king():
+            new_y, new_x = pos
+            y, x = pawn.get_position()
+            if new_y == y + 1 and abs(new_x - x) == 1:
+                pawn.set_position(pos)
+                return True
+        elif pawn.get_state() == STATE_RED and not pawn.get_is_king():
+            new_y, new_x = pos
+            y, x = pawn.get_position()
+            if new_y == y - 1 and abs(new_x - x) == 1:
+                pawn.set_position(pos)
+                return True
+        return False
