@@ -1,4 +1,4 @@
-from checkers.Engine import Engine
+from checkers.Game import Game
 from checkers.constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
-game = Engine((WINDOW_WIDTH, WINDOW_HEIGHT))
+game = Game((WINDOW_WIDTH, WINDOW_HEIGHT))

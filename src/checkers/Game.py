@@ -2,7 +2,7 @@ import pygame as pg
 from .Board import Board
 from .constants import BOARD_HEIGHT, BOARD_WIDTH, STATE_RED, STATE_BLACK
 
-class Engine:
+class Game:
     def __init__(self, resolution):
         self.board = Board()
         pg.init()
