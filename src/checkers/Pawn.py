@@ -23,19 +23,7 @@ class Pawn:
         return self.state
     
     def set_position(self, pos):
-        if self.state == STATE_BLACK and not self.is_king:
-            new_y, new_x = pos
-            y, x = self.pos
-            if new_y == y + 1 and abs(new_x - x) == 1:
-                self.pos = pos
-                return True
-        elif self.state == STATE_RED and not self.is_king:
-            new_y, new_x = pos
-            y, x = self.pos
-            if new_y == y - 1 and abs(new_y - y) == 1:
-                self.pos = pos
-                return True
-        return False
+        self.pos = pos
     
     def set_clicked(self, state):
         self.clicked = state

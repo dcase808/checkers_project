@@ -49,23 +49,3 @@ class Engine:
     def event_handler(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             self.board.click_pawn_event(pg.mouse.get_pos())
-
-    def move_pawn(self, position):
-        x, y = position
-        pos = (y // 100, x // 100)
-        if self.board.clicked and pos in self.board.legal_moves:
-            if self.board.clicked.set_position(pos):
-                self.board.switch_who_to_move()
-            self.board.clicked.set_clicked(False)
-            self.board.clicked = None
-            
-        elif not self.board.clicked:
-            for pawn in self.board.pawns:
-                if pawn.get_position() == pos and self.board.who_to_move == pawn.get_state():
-                    pawn.set_clicked(True)
-                    self.board.clicked = pawn
-        else:
-            self.board.clicked.set_clicked(False)
-            self.board.clicked = None
-        self.board.generate_legal_moves()
-
