@@ -6,9 +6,19 @@ class Pawn:
         self.state = state
         self.is_king = False
         self.clicked = False
+        self.available_moves = []
     
     def __str__(self):
         return f'{self.state} at {self.pos}'
+    
+    def add_available_move(self, pos):
+        self.available_moves.append(pos)
+    
+    def get_available_moves(self):
+        return self.available_moves
+    
+    def clear_available_moves(self):
+        self.available_moves = [] 
     
     def make_king(self):
         self.is_king = True
