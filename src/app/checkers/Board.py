@@ -14,6 +14,7 @@ class Board:
         self.__generate_free_tiles()
         self.__generate_available_moves()
         self.__generate_red_and_black_pawns()
+        self.all_moves = set([0])
         self.clicked = None
         self.who_to_move = STATE_RED
         self.score_red = 0
@@ -105,6 +106,10 @@ class Board:
                         for temp_pawn in self.pawns:
                             if temp_pawn.get_position() == (y + 1, x - 1) and temp_pawn.get_state() != pawn.get_state():       
                                 pawn.add_available_move((y + 2, x - 2))
+        self.all_moves = set()
+        for pawn in self.pawns:
+            for move in pawn.get_available_moves():
+                self.all_moves.add(move)
     
     def __generate_free_tiles(self):
         out = deepcopy(self.legal_moves)

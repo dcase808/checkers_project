@@ -4,38 +4,65 @@ from .constants import BOARD_HEIGHT, BOARD_WIDTH, STATE_RED, STATE_BLACK
 from ai.Minimax import Minimax
 
 class Game:
-    def __init__(self, resolution):
+    def __init__(self, resolution, game_mode, ai):
         self.board = Board()
         pg.init()
         self.window = pg.display.set_mode(resolution)
         self.window.fill('white')
         self.font = pg.font.SysFont(None, 40)
+        self.game_mode = game_mode
+        self.running = True
+        self.winner = None
+        self.ai = ai
         self.game_loop()
 
     def game_loop(self): 
-        running = True
         clock = pg.time.Clock()
-        while running:
+        while self.running:
+            while not self.winner:
+                clock.tick(60)
+                self.window.fill('white')
+                self.draw_board()
+                self.draw_score()
+                self.draw_pieces()
+                self.check_if_over()
+                pg.display.update()
+                if self.game_mode:
+                    if self.board.who_to_move == self.ai:
+                        minimax = Minimax(self.game_mode, self.board, self.ai)
+                        minimax.run()
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        self.running = False
+                        self.winner = 404
+                    else:
+                        self.event_handler(event)
             clock.tick(60)
             self.window.fill('white')
-            self.draw_board()
-            self.draw_score()
-            self.draw_pieces()
+            text_winner = self.font.render(f'WINNER: {"RED" if self.winner == STATE_RED else "WHITE"}', True, (0, 0, 0))
+            self.window.blit(text_winner, (400, 400))
             pg.display.update()
-            if self.board.who_to_move == STATE_BLACK:
-                minimax = Minimax(4, self.board)
-                minimax.run()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    running = False
-                else:
-                    self.event_handler(event)
+                    self.running = False
     
+    def check_if_over(self):
+        if len(self.board.all_moves) == 0:
+            print(len(self.board.all_moves))
+            self.winner = self.board.who_to_move
+            print('end')
+        elif len(self.board.red_pawns) == 0:
+            self.winner = STATE_BLACK
+        elif len(self.board.black_pawns) == 0:
+            self.winner = STATE_RED
+
     def draw_score(self):
-        text_surface = self.font .render(f'White: {self.board.score_black}', True, (0, 0, 0))
-        text_surface2 = self.font .render(f'Red: {self.board.score_red}', True, (0, 0, 0))
-        self.window.blit(text_surface, (850, 200))
-        self.window.blit(text_surface2, (850, 600))
+        text_surface = self.font.render(f'White: {self.board.score_black}', True, (0, 0, 0))
+        text_surface2 = self.font.render(f'Red: {self.board.score_red}', True, (0, 0, 0))
+        text_surface3 = self.font.render(f'{"Reds turn" if self.board.who_to_move == STATE_RED else "Whites turn"}', True, (0, 0, 0))
+        self.window.blit(text_surface, (830, 200))
+        self.window.blit(text_surface2, (830, 600))
+        self.window.blit(text_surface3, (830, 400))
     
     def draw_board(self):
         for row in range(BOARD_HEIGHT):
