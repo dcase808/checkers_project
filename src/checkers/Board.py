@@ -109,10 +109,13 @@ class Board:
     def __generate_free_tiles(self):
         out = deepcopy(self.legal_moves)
         for pawn in self.pawns:
-            out.remove(pawn.get_position())
+            try:
+                out.remove(pawn.get_position())
+            except:
+                pass
         self.free_tiles = out
 
-    def __switch_who_to_move(self):
+    def switch_who_to_move(self):
         if self.who_to_move == STATE_RED:
             self.who_to_move = STATE_BLACK
         elif self.who_to_move == STATE_BLACK:
@@ -122,8 +125,8 @@ class Board:
         x, y = position
         pos = (y // 100, x // 100)
         if self.clicked and pos in self.legal_moves and pos in self.free_tiles:
-            if self.__move_pawn(self.clicked, pos):
-                self.__switch_who_to_move()
+            if self.move_pawn(self.clicked, pos):
+                self.switch_who_to_move()
             self.clicked.set_clicked(False)
             self.clicked = None
         elif not self.clicked:
@@ -137,7 +140,9 @@ class Board:
         self.__generate_free_tiles()
         self.__generate_available_moves()
 
-    def __move_pawn(self, pawn, pos):
+    def move_pawn(self, pawn, pos):
+        self.__generate_free_tiles()
+        self.__generate_available_moves()
         if pos in pawn.get_available_moves():
             if pawn.get_state() == STATE_BLACK and not pawn.get_is_king():
                 new_y, new_x = pos
@@ -169,7 +174,6 @@ class Board:
                         self.__capture_pawn((y - 1, x - 1))
                         pawn.set_position(pos)
                         return True
-                
             elif pawn.get_is_king():
                 new_y, new_x = pos
                 y, x = pawn.get_position()

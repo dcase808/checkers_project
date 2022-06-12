@@ -1,6 +1,7 @@
 import pygame as pg
 from .Board import Board
 from .constants import BOARD_HEIGHT, BOARD_WIDTH, STATE_RED, STATE_BLACK
+from ai.Minimax import Minimax
 
 class Game:
     def __init__(self, resolution):
@@ -18,9 +19,12 @@ class Game:
             clock.tick(60)
             self.window.fill('white')
             self.draw_board()
-            self.draw_pieces()
             self.draw_score()
+            self.draw_pieces()
             pg.display.update()
+            if self.board.who_to_move == STATE_BLACK:
+                minimax = Minimax(4, self.board)
+                minimax.run()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
@@ -47,11 +51,17 @@ class Game:
             if pawn.get_state() == STATE_RED:
                 if pawn.is_clicked():
                     pg.draw.circle(self.window, (155, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
+                    for pos in pawn.get_available_moves():
+                        y, x = pos
+                        pg.draw.circle(self.window, (0, 255, 0), (x * 100 + 50, y * 100 + 50), 10)
                 else:
                     pg.draw.circle(self.window, (255, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
             elif pawn.get_state() == STATE_BLACK:
                 if pawn.is_clicked():
                     pg.draw.circle(self.window, (155, 155, 155), (x * 100 + 50, y * 100 + 50), 30)
+                    for pos in pawn.get_available_moves():
+                        y, x = pos
+                        pg.draw.circle(self.window, (0, 255, 0), (x * 100 + 50, y * 100 + 50), 10)
                 else:
                     pg.draw.circle(self.window, (255, 255, 255), (x * 100 + 50, y * 100 + 50), 30)
             if pawn.get_is_king():
