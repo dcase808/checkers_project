@@ -24,6 +24,10 @@ class Pawn:
     
     def set_position(self, pos):
         self.pos = pos
+        if self.pos[0] == 7 and self.state == STATE_BLACK:
+            self.make_king()
+        if self.pos[0] == 0 and self.state == STATE_RED:
+            self.make_king()
     
     def set_clicked(self, state):
         self.clicked = state

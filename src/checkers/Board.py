@@ -104,7 +104,7 @@ class Board:
         for pawn in self.pawns:
             if pawn.get_position() == pos:
                 self.pawns.remove(pawn)
-            if pawn.get_state() == STATE_BLACK:
-                self.score_black += 1
-            elif pawn.get_state() == STATE_RED:
-                self.score_red += 1
+                if pawn.get_state() == STATE_BLACK:
+                    self.score_black += 1
+                elif pawn.get_state() == STATE_RED:
+                    self.score_red += 1

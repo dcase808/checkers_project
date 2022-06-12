@@ -8,6 +8,7 @@ class Game:
         pg.init()
         self.window = pg.display.set_mode(resolution)
         self.window.fill('white')
+        self.font = pg.font.SysFont(None, 40)
         self.game_loop()
 
     def game_loop(self): 
@@ -15,14 +16,22 @@ class Game:
         clock = pg.time.Clock()
         while running:
             clock.tick(60)
+            self.window.fill('white')
             self.draw_board()
             self.draw_pieces()
+            self.draw_score()
             pg.display.update()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
                 else:
                     self.event_handler(event)
+    
+    def draw_score(self):
+        text_surface = self.font .render(f'White: {self.board.score_black}', True, (0, 0, 0))
+        text_surface2 = self.font .render(f'Red: {self.board.score_red}', True, (0, 0, 0))
+        self.window.blit(text_surface, (850, 200))
+        self.window.blit(text_surface2, (850, 600))
     
     def draw_board(self):
         for row in range(BOARD_HEIGHT):
@@ -40,11 +49,13 @@ class Game:
                     pg.draw.circle(self.window, (155, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
                 else:
                     pg.draw.circle(self.window, (255, 0, 0), (x * 100 + 50, y * 100 + 50), 30)
-            if pawn.get_state() == STATE_BLACK:
+            elif pawn.get_state() == STATE_BLACK:
                 if pawn.is_clicked():
                     pg.draw.circle(self.window, (155, 155, 155), (x * 100 + 50, y * 100 + 50), 30)
                 else:
                     pg.draw.circle(self.window, (255, 255, 255), (x * 100 + 50, y * 100 + 50), 30)
+            if pawn.get_is_king():
+                pg.draw.circle(self.window, (0, 0, 0), (x * 100 + 50, y * 100 + 50), 10)
 
     def event_handler(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
