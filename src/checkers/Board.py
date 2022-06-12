@@ -74,12 +74,12 @@ class Board:
             if new_y == y + 1 and abs(new_x - x) == 1:
                 pawn.set_position(pos)
                 return True
-            elif new_y == y + 2 and abs(new_x - x) == 2 and ((y + 1, x + 1) or (y + 1, x - 1) not in self.free_tiles):
-                if new_x > x:
+            elif new_y == y + 2 and abs(new_x - x) == 2:
+                if new_x > x and (y + 1, x + 1) not in self.free_tiles:
                     self.capture_pawn((y + 1, x + 1))
                     pawn.set_position(pos)
                     return True
-                elif new_x < x:
+                elif new_x < x and (y + 1, x - 1) not in self.free_tiles:
                     self.capture_pawn((y + 1, x - 1))
                     pawn.set_position(pos)
                     return True
@@ -89,12 +89,12 @@ class Board:
             if new_y == y - 1 and abs(new_x - x) == 1:
                 pawn.set_position(pos)
                 return True
-            elif new_y == y - 2 and abs(new_x - x) == 2 and ((y - 1, x + 1) or (y - 1, x - 1) not in self.free_tiles):
-                if new_x > x:
+            elif new_y == y - 2 and abs(new_x - x) == 2:
+                if new_x > x and (y - 1, x + 1) not in self.free_tiles:
                     self.capture_pawn((y - 1, x + 1))
                     pawn.set_position(pos)
                     return True
-                elif new_x < x:
+                elif new_x < x and (y - 1, x - 1) not in self.free_tiles:
                     self.capture_pawn((y - 1, x - 1))
                     pawn.set_position(pos)
                     return True
@@ -104,3 +104,7 @@ class Board:
         for pawn in self.pawns:
             if pawn.get_position() == pos:
                 self.pawns.remove(pawn)
+            if pawn.get_state() == STATE_BLACK:
+                self.score_black += 1
+            elif pawn.get_state() == STATE_RED:
+                self.score_red += 1
