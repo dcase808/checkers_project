@@ -4,17 +4,19 @@ from .Pawn import Pawn
 
 class Board:
     def __init__(self):
-        self.pawns = set()
-        self.red_pawns = set()
-        self.black_pawns = set()
+        self.pawns = []
+        self.red_pawns = []
+        self.black_pawns = []
         self.__init_board()
         self.legal_moves = []
         self.__generate_legal_moves()
         self.free_tiles = []
+        self.all_moves_red = []
+        self.all_moves_black = []
         self.__generate_free_tiles()
         self.__generate_available_moves()
         self.__generate_red_and_black_pawns()
-        self.all_moves = set([0])
+
         self.clicked = None
         self.who_to_move = STATE_RED
         self.score_red = 0
@@ -25,21 +27,21 @@ class Board:
             for j in range(BOARD_WIDTH):
                 if i < 3:
                     if i != 1 and i % 2 == 0 and j % 2 == 1: 
-                        self.pawns.add(Pawn((i, j), STATE_BLACK))
+                        self.pawns.append(Pawn((i, j), STATE_BLACK))
                     elif i == 1 and j % 2 == 0:
-                        self.pawns.add(Pawn((i, j), STATE_BLACK))
+                        self.pawns.append(Pawn((i, j), STATE_BLACK))
                 elif i > 4:
                     if i == 6 and j % 2 == 1: 
-                        self.pawns.add(Pawn((i, j), STATE_RED))
+                        self.pawns.append(Pawn((i, j), STATE_RED))
                     elif i != 6 and j % 2 == 0:
-                        self.pawns.add(Pawn((i, j), STATE_RED))
+                        self.pawns.append(Pawn((i, j), STATE_RED))
     
     def __generate_red_and_black_pawns(self):
         for pawn in self.pawns:
             if pawn.get_state() == STATE_RED:
-                self.red_pawns.add(pawn)
+                self.red_pawns.append(pawn)
             elif pawn.get_state() == STATE_BLACK:
-                self.black_pawns.add(pawn)
+                self.black_pawns.append(pawn)
     
     def __generate_legal_moves(self):
         out = []
@@ -54,30 +56,30 @@ class Board:
             pawn.clear_available_moves()
             y, x = pawn.get_position()
             if pawn.get_is_king():
-                    if (y - 1, x - 1) in self.free_tiles:
-                        pawn.add_available_move((y - 1, x - 1))
-                    elif (y - 2, x - 2) in self.free_tiles:
-                        for temp_pawn in self.pawns:
-                            if temp_pawn.get_position() == (y - 1, x - 1) and temp_pawn.get_state() != pawn.get_state():       
-                                pawn.add_available_move((y - 2, x - 2))
-                    if (y - 1, x + 1) in self.free_tiles:
-                        pawn.add_available_move((y - 1, x + 1))
-                    elif (y - 2, x + 2) in self.free_tiles:
-                        for temp_pawn in self.pawns:
-                            if temp_pawn.get_position() == (y - 1, x + 1) and temp_pawn.get_state() != pawn.get_state():       
-                                pawn.add_available_move((y - 2, x + 2))
-                    if (y + 1, x + 1) in self.free_tiles:
-                        pawn.add_available_move((y + 1, x + 1))
-                    elif (y + 2, x + 2) in self.free_tiles:
-                        for temp_pawn in self.pawns:
-                            if temp_pawn.get_position() == (y + 1, x + 1) and temp_pawn.get_state() != pawn.get_state():       
-                                pawn.add_available_move((y + 2, x + 2))
-                    if (y + 1, x - 1) in self.free_tiles:
-                        pawn.add_available_move((y + 1, x - 1))
-                    elif (y + 2, x - 2) in self.free_tiles:
-                        for temp_pawn in self.pawns:
-                            if temp_pawn.get_position() == (y + 1, x - 1) and temp_pawn.get_state() != pawn.get_state():       
-                                pawn.add_available_move((y + 2, x - 2))
+                if (y - 1, x - 1) in self.free_tiles:
+                    pawn.add_available_move((y - 1, x - 1))
+                elif (y - 2, x - 2) in self.free_tiles:
+                    for temp_pawn in self.pawns:
+                        if temp_pawn.get_position() == (y - 1, x - 1) and temp_pawn.get_state() != pawn.get_state():       
+                            pawn.add_available_move((y - 2, x - 2))
+                if (y - 1, x + 1) in self.free_tiles:
+                    pawn.add_available_move((y - 1, x + 1))
+                elif (y - 2, x + 2) in self.free_tiles:
+                    for temp_pawn in self.pawns:
+                        if temp_pawn.get_position() == (y - 1, x + 1) and temp_pawn.get_state() != pawn.get_state():       
+                            pawn.add_available_move((y - 2, x + 2))
+                if (y + 1, x + 1) in self.free_tiles:
+                    pawn.add_available_move((y + 1, x + 1))
+                elif (y + 2, x + 2) in self.free_tiles:
+                    for temp_pawn in self.pawns:
+                        if temp_pawn.get_position() == (y + 1, x + 1) and temp_pawn.get_state() != pawn.get_state():       
+                            pawn.add_available_move((y + 2, x + 2))
+                if (y + 1, x - 1) in self.free_tiles:
+                    pawn.add_available_move((y + 1, x - 1))
+                elif (y + 2, x - 2) in self.free_tiles:
+                    for temp_pawn in self.pawns:
+                        if temp_pawn.get_position() == (y + 1, x - 1) and temp_pawn.get_state() != pawn.get_state():       
+                            pawn.add_available_move((y + 2, x - 2))
             else:
                 y, x = pawn.get_position()
                 if pawn.get_state() == STATE_RED:
@@ -106,10 +108,15 @@ class Board:
                         for temp_pawn in self.pawns:
                             if temp_pawn.get_position() == (y + 1, x - 1) and temp_pawn.get_state() != pawn.get_state():       
                                 pawn.add_available_move((y + 2, x - 2))
-        self.all_moves = set()
+        self.all_moves_red = []
+        self.all_moves_black = []
         for pawn in self.pawns:
-            for move in pawn.get_available_moves():
-                self.all_moves.add(move)
+            if pawn.get_state() == STATE_RED:
+                for move in pawn.get_available_moves():
+                    self.all_moves_red.append(move)
+            if pawn.get_state() == STATE_BLACK:
+                for move in pawn.get_available_moves():
+                    self.all_moves_black.append(move)
     
     def __generate_free_tiles(self):
         out = deepcopy(self.legal_moves)

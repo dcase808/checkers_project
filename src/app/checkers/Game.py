@@ -25,8 +25,8 @@ class Game:
                 self.draw_board()
                 self.draw_score()
                 self.draw_pieces()
-                self.check_if_over()
                 pg.display.update()
+                self.check_if_over()
                 if self.game_mode:
                     if self.board.who_to_move == self.ai:
                         minimax = Minimax(self.game_mode, self.board, self.ai)
@@ -40,17 +40,19 @@ class Game:
             clock.tick(60)
             self.window.fill('white')
             text_winner = self.font.render(f'WINNER: {"RED" if self.winner == STATE_RED else "WHITE"}', True, (0, 0, 0))
+            text_winner2 = self.font.render(f'press any key to continue', True, (0, 0, 0))
             self.window.blit(text_winner, (400, 400))
+            self.window.blit(text_winner2, (320, 700))
             pg.display.update()
             for event in pg.event.get():
-                if event.type == pg.QUIT:
+                if event.type == pg.QUIT or event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     self.running = False
     
     def check_if_over(self):
-        if len(self.board.all_moves) == 0:
-            print(len(self.board.all_moves))
-            self.winner = self.board.who_to_move
-            print('end')
+        if self.board.who_to_move == STATE_RED and len(self.board.all_moves_red) == 0:
+            self.winner = STATE_BLACK
+        elif self.board.who_to_move == STATE_BLACK and len(self.board.all_moves_black) == 0:
+            self.winner = STATE_RED
         elif len(self.board.red_pawns) == 0:
             self.winner = STATE_BLACK
         elif len(self.board.black_pawns) == 0:

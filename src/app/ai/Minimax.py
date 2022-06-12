@@ -7,20 +7,33 @@ class Minimax:
         self.board = deepcopy(board)
         self.depth = depth
         self.maximizing_player = maximizing_player
-        self.best_move = None
+        self.best_move = (0, 0), (0, 0)
 
     def __evaluate(self, board):
-        return board.score_black - board.score_red if self.maximizing_player == STATE_RED else board.score_red - board.score_black
+        if self.maximizing_player == STATE_BLACK:
+            return board.score_black - board.score_red
+        else:
+            return board.score_red - board.score_black
+    
+    def is_over(self, board):
+        if board.who_to_move == STATE_RED and len(board.all_moves_red) == 0:
+            return True
+        elif board.who_to_move == STATE_BLACK and len(board.all_moves_black) == 0:
+            return True
+        elif len(board.red_pawns) == 0:
+            return True
+        elif len(board.black_pawns) == 0:
+            return True
     
     def run(self):
-        self.minimax(self.board, self.depth, -9999, 9999, True)
+        print(f'real eval: {self.minimax(self.board, self.depth, -9999, 9999, True)}')
         for pawn in self.original_board.pawns.copy():
             if pawn.get_position() == self.best_move[0]:
                 self.original_board.move_pawn(pawn, self.best_move[1])
                 self.original_board.switch_who_to_move()
 
     def minimax(self, board, depth, alpha, beta, maximizing_player):
-        if depth == 0:
+        if depth == 0 or self.is_over(board):
             return self.__evaluate(board)
         
         if maximizing_player:
@@ -34,6 +47,7 @@ class Minimax:
                         eval = self.minimax(temp_board, depth - 1, alpha, beta, False)
                         if eval > max_eval and depth == self.depth:
                             self.best_move = temp_move
+                            print(self.best_move)
                         max_eval = max(max_eval, eval)
                         alpha = max(alpha, eval)
                         if beta <= alpha:
